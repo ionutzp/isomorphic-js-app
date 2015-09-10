@@ -4,7 +4,7 @@ var Search = require("./search");
 var App = React.createClass({
   render(){
     return(
-      <Search />
+      <Search data-renderer = {this.props.renderer} />
     );
   }
 });

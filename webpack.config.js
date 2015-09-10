@@ -1,8 +1,8 @@
 var path = require("path");
-
+debugger;
 module.exports = [{
-  context: path.join(__dirname, "public", "javascripts"),
-  entry: "app",
+  context: path.join(__dirname, "app"),
+  entry: 'routes/router',
   output: {
     path: path.join(__dirname, "public", "javascripts"),
     filename: "bundle.js"
@@ -15,7 +15,7 @@ module.exports = [{
   resolve: {
     // You can now require('file') instead of require('file.coffee')
     extensions: ["", ".js", ".jsx"],
-    root: [path.join(__dirname, "public", "javascripts")],
+    root: [path.join(__dirname, "app")],
     modulesDirectories: ["node_modules"]
   }
 }];

@@ -9,15 +9,16 @@ var Search = React.createClass({
   render() {
     return (
       <div className="search-component">
+        <a href="/test">routing test</a>
         <input type="text" onChange={this.changeSearch} />
         <p><span>You are searching for: {this.state.search}</span></p>
+        <p>renderer = {this.props['data-renderer']}</p>
       </div>
     );
   },
 
   changeSearch(event) {
     var text = event.target.value;
-    debugger;
     this.setState({
       search: text
     });
