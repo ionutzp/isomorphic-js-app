@@ -13,5 +13,12 @@
     "express": "~4.9.0",
     "hjs": "~0.0.6",
     "director": "^1.2.7"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-nodemon": "^2.0.4",
+    "gulp-util": "^3.0.6",
+    "webpack": "^1.12.1",
+    "webpack-stream": "^2.1.0"
   }
 }

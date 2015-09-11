@@ -44,43 +44,12 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(process) {// module.exports = function middleware(router) {
-	//   var directorRouter = router.directorRouter;
-
-	//   return function middleware(req, res, next) {
-	//     // Attach `this.next` to route handler, for better handling of errors.
-	//     directorRouter.attach(function() {
-	//       this.next = next;
-	//     });
-
-	//     // Dispatch the request to the Director router.
-	//     directorRouter.dispatch(req, res, function (err) {
-	//       // When a 404, just forward on to next Express middleware.
-	//       if (err && err.status === 404) {
-	//         next();
-	//       }
-	//     });
-	//   };
-	// };
-
-	var director = __webpack_require__(2);
+	/* WEBPACK VAR INJECTION */(function(process) {var director = __webpack_require__(2);
 	var React = __webpack_require__(3);
 	var isServer = !process.browser;
-	// var routes = require('./routes');
-	// // var router = new Router(routes);
 	var DirectorRouter = isServer ? director.http.Router : director.Router;
 	var Renderer = __webpack_require__(158);
-	var routes = function(match) {
-	  match('/', function(callback) {
-	    console.log('route - index', callback);
-	    callback(null, 'index');
-	  });
-
-	  match('/test', function(callback) {
-	    console.log('route - test', callback);
-	    callback(null, 'test');
-	  });
-	};
+	var routes = __webpack_require__(160);
 
 	function Router(routesFn) {
 	  if (routesFn == null) throw new Error("Must provide routes.");
@@ -93,10 +62,6 @@
 	    this.start();
 	  }
 	}
-
-
-
-
 
 	/**
 	 * Capture routes as object that can be passed to Director.
@@ -132,7 +97,6 @@
 	    };
 
 	    function handleRoute() {
-	      debugger;
 	      handler.apply(handlerContext, params.concat(function routeHandler(err, viewPath, data) {
 	        if (err) return handleErr(err);
 
@@ -141,9 +105,7 @@
 	        data.router = router;
 	        // Add `renderer` property to demonstrate which side did the rendering.
 	        data.renderer = isServer ? 'server' : 'client';
-	        debugger;
 	        var component = router.getComponent(viewPath, data);
-
 	        router.renderer.render(component, routeContext.req, routeContext.res);
 	      }));
 	    }
@@ -161,7 +123,7 @@
 	    var Component = React.createFactory(!(function webpackMissingModule() { var e = new Error("Cannot find module \".\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 	  }
 	  else {
-	    var req = __webpack_require__(161);
+	    var req = __webpack_require__(162);
 	    var path =  './' + viewPath + '.jsx';
 	    var module = req(path);
 	    var Component = React.createFactory(module);
@@ -179,21 +141,6 @@
 	  this.directorRouter.configure({
 	    html5history: true
 	  });
-
-	//   /**
-	//    * Intercept any links that don't have 'data-pass-thru' and route using
-	//    * pushState.
-	//    */
-	//   document.addEventListener('click', function(e) {
-	//     var el = e.target;
-	//     var dataset = el && el.dataset;
-	//     if (el && el.nodeName === 'A' && (
-	//         dataset.passThru == null || dataset.passThru === 'false'
-	//       )) {
-	//       this.directorRouter.setRoute(el.attributes.href.value);
-	//       e.preventDefault();
-	//     }
-	//   }.bind(this), false);
 
 	  /**
 	   * Kick off routing.
@@ -213,11 +160,10 @@
 	module.exports = function middleware() {
 	  var directorRouter = router.directorRouter;
 	  return function middleware(req, res, next) {
-	    // console.log('xxx', req, res, next);
 	    // Attach `this.next` to route handler, for better handling of errors.
-	    // directorRouter.attach(function() {
-	    //   this.next = next;
-	    // });
+	    directorRouter.attach(function() {
+	      this.next = next;
+	    });
 
 	    // Dispatch the request to the Director router.
 	    directorRouter.dispatch(req, res, function (err) {
@@ -270,7 +216,9 @@
 	        currentQueue = queue;
 	        queue = [];
 	        while (++queueIndex < len) {
-	            currentQueue[queueIndex].run();
+	            if (currentQueue) {
+	                currentQueue[queueIndex].run();
+	            }
 	        }
 	        queueIndex = -1;
 	        len = queue.length;
@@ -322,7 +270,6 @@
 	    throw new Error('process.binding is not supported');
 	};
 
-	// TODO(shtylman)
 	process.cwd = function () { return '/' };
 	process.chdir = function (dir) {
 	    throw new Error('process.chdir is not supported');
@@ -21353,20 +21300,10 @@
 
 	  function RendererServer() {}
 
-	  RendererServer.prototype.viewsDir = process.cwd() + '/app/components';
+	  RendererServer.viewsDir = process.cwd() + '/app/components';
 
 	  RendererServer.prototype.render = function(component, req, res) {
 	    var html = React.renderToString(component);
-
-	    // var locals = {
-	    //   body: html,
-	    // };
-
-	    // var markup = React.renderToString(
-	    //   App()
-	    // );
-
-
 	    // wrapWithLayout(locals, function(err, layoutHtml) {
 	    // if (err) return res.status(500).type('text').send(err.message);
 	    // res.send(html);
@@ -21403,7 +21340,7 @@
 
 	  function RendererClient() {}
 
-	  RendererClient.prototype.viewsDir = '../components';
+	  RendererClient.viewsDir = '../components';
 
 	  RendererClient.prototype.render = function(component) {
 	    window.onload = function(){
@@ -21441,23 +21378,42 @@
 /* 160 */
 /***/ function(module, exports) {
 
+	var routes = function(match) {
+	  match('/', function(callback) {
+	    console.log('route - index', callback);
+	    callback(null, 'index');
+	  });
+
+	  match('/test', function(callback) {
+	    console.log('route - test', callback);
+	    callback(null, 'test');
+	  });
+	};
+
+	module.exports = routes;
+
+
+/***/ },
+/* 161 */
+/***/ function(module, exports) {
+
 	function webpackContext(req) {
 		throw new Error("Cannot find module '" + req + "'.");
 	}
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 160;
+	webpackContext.id = 161;
 
 
 /***/ },
-/* 161 */
+/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./index.jsx": 162,
-		"./search.jsx": 163,
-		"./test.jsx": 164
+		"./index.jsx": 163,
+		"./search.jsx": 164,
+		"./test.jsx": 165
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -21470,15 +21426,15 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 161;
+	webpackContext.id = 162;
 
 
 /***/ },
-/* 162 */
+/* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(3);
-	var Search = __webpack_require__(163);
+	var Search = __webpack_require__(164);
 
 	var App = React.createClass({displayName: "App",
 	  render:function(){
@@ -21492,7 +21448,7 @@
 
 
 /***/ },
-/* 163 */
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(3);
@@ -21526,7 +21482,7 @@
 
 
 /***/ },
-/* 164 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(3);
@@ -21554,7 +21510,7 @@
 	    });
 	  }
 	});
-
+	console.log('a');
 	module.exports = Test;
 
 

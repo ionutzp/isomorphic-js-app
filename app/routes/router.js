@@ -1,40 +1,9 @@
-// module.exports = function middleware(router) {
-//   var directorRouter = router.directorRouter;
-
-//   return function middleware(req, res, next) {
-//     // Attach `this.next` to route handler, for better handling of errors.
-//     directorRouter.attach(function() {
-//       this.next = next;
-//     });
-
-//     // Dispatch the request to the Director router.
-//     directorRouter.dispatch(req, res, function (err) {
-//       // When a 404, just forward on to next Express middleware.
-//       if (err && err.status === 404) {
-//         next();
-//       }
-//     });
-//   };
-// };
-
 var director = require('director');
 var React = require('react');
 var isServer = !process.browser;
-// var routes = require('./routes');
-// // var router = new Router(routes);
 var DirectorRouter = isServer ? director.http.Router : director.Router;
 var Renderer = require('../renderer');
-var routes = function(match) {
-  match('/', function(callback) {
-    console.log('route - index', callback);
-    callback(null, 'index');
-  });
-
-  match('/test', function(callback) {
-    console.log('route - test', callback);
-    callback(null, 'test');
-  });
-};
+var routes = require('./routes');
 
 function Router(routesFn) {
   if (routesFn == null) throw new Error("Must provide routes.");
@@ -47,10 +16,6 @@ function Router(routesFn) {
     this.start();
   }
 }
-
-
-
-
 
 /**
  * Capture routes as object that can be passed to Director.
@@ -86,7 +51,6 @@ Router.prototype.getRouteHandler = function(handler) {
     };
 
     function handleRoute() {
-      debugger;
       handler.apply(handlerContext, params.concat(function routeHandler(err, viewPath, data) {
         if (err) return handleErr(err);
 
@@ -95,9 +59,7 @@ Router.prototype.getRouteHandler = function(handler) {
         data.router = router;
         // Add `renderer` property to demonstrate which side did the rendering.
         data.renderer = isServer ? 'server' : 'client';
-        debugger;
         var component = router.getComponent(viewPath, data);
-
         router.renderer.render(component, routeContext.req, routeContext.res);
       }));
     }
@@ -134,21 +96,6 @@ Router.prototype.start = function() {
     html5history: true
   });
 
-//   /**
-//    * Intercept any links that don't have 'data-pass-thru' and route using
-//    * pushState.
-//    */
-//   document.addEventListener('click', function(e) {
-//     var el = e.target;
-//     var dataset = el && el.dataset;
-//     if (el && el.nodeName === 'A' && (
-//         dataset.passThru == null || dataset.passThru === 'false'
-//       )) {
-//       this.directorRouter.setRoute(el.attributes.href.value);
-//       e.preventDefault();
-//     }
-//   }.bind(this), false);
-
   /**
    * Kick off routing.
    */
@@ -167,11 +114,10 @@ var router = new Router(routes);
 module.exports = function middleware() {
   var directorRouter = router.directorRouter;
   return function middleware(req, res, next) {
-    // console.log('xxx', req, res, next);
     // Attach `this.next` to route handler, for better handling of errors.
-    // directorRouter.attach(function() {
-    //   this.next = next;
-    // });
+    directorRouter.attach(function() {
+      this.next = next;
+    });
 
     // Dispatch the request to the Director router.
     directorRouter.dispatch(req, res, function (err) {

@@ -1,6 +1,6 @@
 var path = require("path");
-debugger;
 module.exports = [{
+  watch: true,
   context: path.join(__dirname, "app"),
   entry: 'routes/router',
   output: {

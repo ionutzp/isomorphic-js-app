@@ -8,20 +8,10 @@ if(isServer){
 
   function RendererServer() {}
 
-  RendererServer.prototype.viewsDir = process.cwd() + '/app/components';
+  RendererServer.viewsDir = process.cwd() + '/app/components';
 
   RendererServer.prototype.render = function(component, req, res) {
     var html = React.renderToString(component);
-
-    // var locals = {
-    //   body: html,
-    // };
-
-    // var markup = React.renderToString(
-    //   App()
-    // );
-
-
     // wrapWithLayout(locals, function(err, layoutHtml) {
     // if (err) return res.status(500).type('text').send(err.message);
     // res.send(html);
@@ -58,7 +48,7 @@ else {
 
   function RendererClient() {}
 
-  RendererClient.prototype.viewsDir = '../components';
+  RendererClient.viewsDir = '../components';
 
   RendererClient.prototype.render = function(component) {
     window.onload = function(){
