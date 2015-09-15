@@ -1,10 +1,11 @@
 var React = require("react");
-var Search = require("./search");
+var TodoApp = require("./todoapp");
+var tasks = require("../data/provider").get('tasks');
 
 var App = React.createClass({
   render(){
     return(
-      <Search data-renderer = {this.props.renderer} />
+      <TodoApp renderer = {this.props.renderer} todos = {tasks} term={this.props.term}/>
     );
   }
 });

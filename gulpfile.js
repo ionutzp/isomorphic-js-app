@@ -19,7 +19,39 @@ gulp.task("webpack:build-dev", function(callback) {
   });
 });
 
-gulp.task('start', ["build-dev"], function () {
+var startNodeInspector = function(){
+  var child = spawn("node-inspector", [], {cwd: process.cwd()}),
+  stdout = '',
+  stderr = '';
+
+  child.stdout.setEncoding('utf8');
+
+  child.stdout.on('data', function (data) {
+    stdout += data;
+    gutil.log(data);
+  });
+
+  child.stderr.setEncoding('utf8');
+
+  child.stderr.on('data', function (data) {
+    stderr += data;
+    gutil.log(gutil.colors.red(data));
+    gutil.beep();
+  });
+
+  child.on('close', function(code) {
+    gutil.log("Done with exit code", code);
+  });
+};
+
+gulp.task("nodeInspector", function() {
+  startNodeInspector();
+});
+
+
+
+
+gulp.task('start', ["nodeInspector", "build-dev"], function () {
   nodemon({
     script: './bin/www',
     ext: 'js',
@@ -35,27 +67,6 @@ gulp.task('start', ["build-dev"], function () {
   })
   .once('start', function(){
     // start the node inspector
-    var child = spawn("node-inspector", [], {cwd: process.cwd()}),
-    stdout = '',
-    stderr = '';
-
-    child.stdout.setEncoding('utf8');
-
-    child.stdout.on('data', function (data) {
-      stdout += data;
-      gutil.log(data);
-    });
-
-    child.stderr.setEncoding('utf8');
-    child.stderr.on('data', function (data) {
-      stderr += data;
-      gutil.log(gutil.colors.red(data));
-      gutil.beep();
-    });
-
-    child.on('close', function(code) {
-      gutil.log("Done with exit code", code);
-    });
   });
 });
 

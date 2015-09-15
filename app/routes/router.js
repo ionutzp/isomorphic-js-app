@@ -7,7 +7,6 @@ var routes = require('./routes');
 
 function Router(routesFn) {
   if (routesFn == null) throw new Error("Must provide routes.");
-
   this.directorRouter = new DirectorRouter(this.parseRoutes(routesFn));
   this.renderer = new Renderer();
 
@@ -22,8 +21,8 @@ function Router(routesFn) {
  */
 Router.prototype.parseRoutes = function(routesFn) {
   var routes = {};
-
   routesFn(function(pattern, handler) {
+
     // Server routes are an object, not a function. We just use `get`.
     if (isServer) {
       routes[pattern] = {
@@ -50,22 +49,22 @@ Router.prototype.getRouteHandler = function(handler) {
       res: this.res,
     };
 
-    function handleRoute() {
-      handler.apply(handlerContext, params.concat(function routeHandler(err, viewPath, data) {
-        if (err) return handleErr(err);
+    // callback passed to the route
+    function routeCallback(err, viewPath, term) {
+      if (err) return handleErr(err);
 
-        data = data || {};
-        // Add `router` property, i.e. so components can do redirects.
-        data.router = router;
-        // Add `renderer` property to demonstrate which side did the rendering.
-        data.renderer = isServer ? 'server' : 'client';
-        var component = router.getComponent(viewPath, data);
-        router.renderer.render(component, routeContext.req, routeContext.res);
-      }));
+      var data = data || {};
+      // Add `router` property, i.e. so components can do redirects.
+      data.router = router;
+      // Add `renderer` property to demonstrate which side did the rendering.
+      data.renderer = isServer ? 'server' : 'client';
+      data.term = term || "";
+      var component = router.getComponent(viewPath, data);
+      router.renderer.render(component, routeContext.req, routeContext.res);
     }
 
     try {
-      handleRoute();
+      handler.apply(handlerContext, params.concat(routeCallback));
     } catch (err) {
       handleErr(err);
     }
