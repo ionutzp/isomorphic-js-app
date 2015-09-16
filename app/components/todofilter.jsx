@@ -9,6 +9,7 @@ var TodoFilter = React.createClass({
   render() {
     return (
       <div className="TodoFilter">
+        Filter:
         <input value={this.props.filterText}  type="text" onChange={this.handleChange} ref="filterTextInput"/>
       </div>
     );

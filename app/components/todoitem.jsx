@@ -10,13 +10,6 @@ var TodoItem = React.createClass({
       </li>
     );
   }
-
-  // changeSearch(event) {
-  //   var text = event.target.value;
-  //   this.setState({
-  //     search: text
-  //   });
-  // }
 });
 
 module.exports = TodoItem;
