@@ -50,15 +50,14 @@ Router.prototype.getRouteHandler = function(handler) {
     };
 
     // callback passed to the route
-    function routeCallback(err, viewPath, term) {
+    function routeCallback(err, viewPath, todos) {
       if (err) return handleErr(err);
-
       var data = data || {};
       // Add `router` property, i.e. so components can do redirects.
       data.router = router;
       // Add `renderer` property to demonstrate which side did the rendering.
       data.renderer = isServer ? 'server' : 'client';
-      data.term = term || "";
+      data.todos = todos || [];
       var component = router.getComponent(viewPath, data);
       router.renderer.render(component, routeContext.req, routeContext.res);
     }
@@ -88,16 +87,9 @@ Router.prototype.getComponent = function(viewPath, data) {
 //  * Client-side handler to start router.
 //  */
 Router.prototype.start = function() {
-  /**
-   * Tell Director to use HTML5 History API (pushState).
-   */
   this.directorRouter.configure({
     html5history: true
   });
-
-  /**
-   * Kick off routing.
-   */
   this.directorRouter.init();
 };
 

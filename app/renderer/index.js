@@ -1,6 +1,4 @@
 var React = require('react');
-// Require Handlebars for layout.
-// require('handlebars');
 var isServer = !process.browser;
 
 if(isServer){
@@ -12,10 +10,6 @@ if(isServer){
 
   RendererServer.prototype.render = function(component, req, res) {
     var html = React.renderToString(component);
-    // wrapWithLayout(locals, function(err, layoutHtml) {
-    // if (err) return res.status(500).type('text').send(err.message);
-    // res.send(html);
-    // });
     res.render("index", {
       markup: html
     });
@@ -25,24 +19,8 @@ if(isServer){
     console.error(err.message + err.stack);
     this.next(err);
   };
-
-  /**
-   * Helper functions.
-   */
-
-  function wrapWithLayout(locals, callback) {
-    try {
-      var layout = require(RendererServer.viewsDir + '/layout');
-      var layoutHtml = layout(locals);
-      callback(null, layoutHtml);
-    } catch (err) {
-      callback(err);
-    }
-  }
 }
 else {
-  // Expose `window.React` for dev tools.
-  window.React = React;
 
   module.exports = RendererClient;
 
@@ -51,9 +29,7 @@ else {
   RendererClient.viewsDir = '../components';
 
   RendererClient.prototype.render = function(component) {
-    window.onload = function(){
-      React.render(component, document.getElementById("content"));
-    }
+    React.render(component, document.getElementById("content"));
 
   };
 

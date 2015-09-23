@@ -6,13 +6,19 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "jsx-loader": "^0.13.2",
-    "node-jsx": "^0.13.3",
-    "react": "^0.13.3",
+    "body-parser": "^1.14.0",
     "debug": "~2.0.0",
+    "director": "^1.2.7",
     "express": "~4.9.0",
     "hjs": "~0.0.6",
-    "director": "^1.2.7"
+    "http-proxy": "^1.11.2",
+    "jquery": "^2.1.4",
+    "jsx-loader": "^0.13.2",
+    "mongoose": "^4.1.7",
+    "node-jsx": "^0.13.3",
+    "react": "^0.13.3",
+    "superagent": "^1.4.0",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
